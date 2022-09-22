@@ -1,24 +1,12 @@
-import React from "react";
 import {
-  Text,
-  Link,
-  HStack,
-  Center,
-  Heading,
-  Switch,
-  useColorMode,
-  NativeBaseProvider,
-  extendTheme,
-  VStack,
-  Box,
+  Box, Center, extendTheme, Heading, HStack, Link, NativeBaseProvider, Switch, Text, useColorMode, VStack
 } from "native-base";
-import NativeBaseIcon from "./components/NativeBaseIcon";
-import { Platform } from "react-native";
+import React from "react";
 
 // Define the config
 const config = {
   useSystemColorMode: false,
-  initialColorMode: "dark",
+  initialColorMode: "light",
 };
 
 // extend the theme
@@ -34,7 +22,6 @@ export default function App() {
         flex={1}
       >
         <VStack space={5} alignItems="center">
-          <NativeBaseIcon />
           <Heading size="lg">Welcome to NativeBase</Heading>
           <HStack space={2} alignItems="center">
             <Text>Edit</Text>

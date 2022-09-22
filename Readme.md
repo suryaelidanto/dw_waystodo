@@ -1,9 +1,30 @@
-# NativeBase Expo Template
 
-The official NativeBase template for [Expo](https://docs.expo.io/)
+# Dumbways TODO App
 
-## Usage
+Simple project made with react native to finish the task.
+## Run Locally
 
-```sh
-expo init my-app --template @native-base/expo-template
+Clone the project
+
+```bash
+  git clone https://github.com/suryaa6666/dw_waystodo
 ```
+
+Go to the project directory
+
+```bash
+  cd dw_waystodo
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run start
+```
+
