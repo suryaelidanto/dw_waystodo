@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { showMessage } from "react-native-flash-message";
 import { useMutation } from "react-query";
 import WaysTODOAuthImage from "../assets/waystodo-auth.png";
-import { API } from "../config/api";
+import { API, setAuthorization } from "../config/api";
 import { UserContext } from "../context/userContext";
 
 function Login({ navigation }) {
@@ -36,6 +36,8 @@ function Login({ navigation }) {
         type: "LOGIN_SUCCESS",
         payload,
       });
+      // harus di set biar ganteng
+      setAuthorization(response.data.token);
       //Login berhasil cus navigate ke home 😁
       navigation.navigate("Home");
     } catch (err) {
