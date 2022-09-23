@@ -2,15 +2,26 @@ import { Box, Text, Menu, Button, Image } from "native-base";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/userContext";
 import { showMessage } from "react-native-flash-message";
+import { useQuery } from "react-query";
+import { API } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Home({ navigation }) {
   const [state, dispatch] = useContext(UserContext);
   const [shouldOverlapWithTrigger] = useState(false);
 
+  let { data: list } = useQuery("listCaches", async () => {
+    const response = await API.get("/List");
+    console.log("response list", response.data);
+    return response.data;
+  });
+
   function handleLogout() {
+    AsyncStorage.removeItem("token");
     dispatch({
       type: "LOGOUT_SUCCESS",
     });
+    console.log(state);
     showMessage({
       message: "Logout berhasil!",
       type: "success",
@@ -26,7 +37,7 @@ function Home({ navigation }) {
             Hi {state?.data?.user?.firstName}
           </Text>
           <Text fontSize={15} color="error.500">
-            200 Lists
+            {list && Object.keys(list).length} Lists
           </Text>
         </Box>
         <Box flex={1} justifyContent="center" alignItems="flex-end" mx={2}>

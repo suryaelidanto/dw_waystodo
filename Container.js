@@ -101,13 +101,6 @@ function Container() {
                 headerShown: false,
               }}
             />
-            <NativeStack.Screen
-              name="Home"
-              component={Home}
-              options={{
-                headerShown: false,
-              }}
-            />
           </NativeStack.Navigator>
         </>
       )}
