@@ -1,9 +1,10 @@
-import { extendTheme, NativeBaseProvider } from "native-base";
-import React, { useEffect } from "react";
-import Container from "./Container";
-import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
-import { QueryClientProvider, QueryClient } from "react-query";
+import { useFonts } from "expo-font";
+import { extendTheme, NativeBaseProvider } from "native-base";
+import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import Container from "./Container";
+import { UserContextProvider } from "./context/userContext";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -45,7 +46,9 @@ export default function App() {
     <NavigationContainer>
       <QueryClientProvider client={client}>
         <NativeBaseProvider theme={theme}>
-          <Container />
+          <UserContextProvider>
+            <Container />
+          </UserContextProvider>
         </NativeBaseProvider>
       </QueryClientProvider>
     </NavigationContainer>

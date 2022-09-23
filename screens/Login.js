@@ -23,16 +23,14 @@ function Login({ navigation }) {
     e.preventDefault();
     try {
       const response = await API.post("/auth/login", dataLogin);
-      // storage buat web
-      localStorage.setItem("token", response.data.token);
-      // storage buat android, biasanya pake @ di keynya tapi gatau kenapa jadi buat sekarang ga pake dulu
       AsyncStorage.setItem("token", response.data.token);
       console.log(response.data);
       showMessage({
         message: "Login berhasil!",
         type: "success",
       });
-      return response.data;
+      //Login berhasil cus navigate ke home 😁
+      navigation.navigate("Home");
     } catch (err) {
       showMessage({
         message: "Email / password salah!",
