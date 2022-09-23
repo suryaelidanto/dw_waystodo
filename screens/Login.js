@@ -1,12 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Box, Button, Image, Input, Text } from "native-base";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { showMessage } from "react-native-flash-message";
 import { useMutation } from "react-query";
 import WaysTODOAuthImage from "../assets/waystodo-auth.png";
 import { API } from "../config/api";
+import { UserContext } from "../context/userContext";
 
 function Login({ navigation }) {
+  const [state, dispatch] = useContext(UserContext);
   const [dataLogin, setDataLogin] = useState({
     email: "",
     password: "",
@@ -25,6 +27,9 @@ function Login({ navigation }) {
       const response = await API.post("/auth/login", dataLogin);
       AsyncStorage.setItem("token", response.data.token);
       console.log(response.data);
+      dispatch({
+        type: "LOGIN_SUCCESS",
+      });
       showMessage({
         message: "Login berhasil!",
         type: "success",

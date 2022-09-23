@@ -6,7 +6,7 @@ export const UserContext = createContext();
 const initialState = {
   isLogin: false,
   isAdmin: false,
-  user: {},
+  data: {},
 };
 
 function reducer(state, action) {
@@ -20,7 +20,7 @@ function reducer(state, action) {
       return {
         isLogin: true,
         isAdmin: payload?.user?.role[0] === "admin" ? true : false,
-        user: payload,
+        data: payload,
       };
     case "AUTH_ERROR":
     case "LOGOUT_SUCCESS":
@@ -28,7 +28,7 @@ function reducer(state, action) {
       return {
         isLogin: false,
         isAdmin: false,
-        user: {},
+        data: {},
       };
     default:
       throw new Error();
