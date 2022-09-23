@@ -27,12 +27,14 @@ function Login({ navigation }) {
       const response = await API.post("/auth/login", dataLogin);
       AsyncStorage.setItem("token", response.data.token);
       console.log(response.data);
-      dispatch({
-        type: "LOGIN_SUCCESS",
-      });
+      const payload = response.data;
       showMessage({
         message: "Login berhasil!",
         type: "success",
+      });
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload,
       });
       //Login berhasil cus navigate ke home 😁
       navigation.navigate("Home");
