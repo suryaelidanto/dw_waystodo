@@ -1,5 +1,5 @@
 import { Box, Button, Image, Text } from "native-base";
-import WaysTODOWelcome from "../assets/waystodo-welcome.png";
+import WaysTODOWelcomeImage from "../assets/waystodo-welcome.png";
 
 function Welcome({ navigation }) {
   return (
@@ -11,7 +11,7 @@ function Welcome({ navigation }) {
       bg="white"
     >
       <Image
-        source={WaysTODOWelcome}
+        source={WaysTODOWelcomeImage}
         width={300}
         height={300}
         resizeMode="contain"

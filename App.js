@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Container from "./Container";
 import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
+import { QueryClientProvider, QueryClient } from "react-query";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -38,11 +39,15 @@ export default function App() {
     return <></>;
   }
 
+  const client = new QueryClient();
+
   return (
     <NavigationContainer>
-      <NativeBaseProvider theme={theme}>
-        <Container />
-      </NativeBaseProvider>
+      <QueryClientProvider client={client}>
+        <NativeBaseProvider theme={theme}>
+          <Container />
+        </NativeBaseProvider>
+      </QueryClientProvider>
     </NavigationContainer>
   );
 }
