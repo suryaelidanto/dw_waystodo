@@ -70,6 +70,9 @@ function Container() {
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
+          tabBarLabel: () => {
+            return null;
+          },
           tabBarIcon: ({ focused, color, size }) => {
             let iconType;
             let iconName;

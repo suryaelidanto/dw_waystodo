@@ -173,6 +173,7 @@ function Home({ navigation }) {
                     borderRadius="100%"
                     borderWidth="2px"
                     borderColor="error.500"
+                    alt={DefaultProfile}
                   />
                 </Button>
               );
@@ -256,7 +257,7 @@ function Home({ navigation }) {
                     {
                       category?.find(
                         (itemCategory) => itemCategory._id === item.category_id
-                      ).name
+                      )?.name
                     }
                   </Text>
                 </Box>
@@ -285,6 +286,7 @@ function Home({ navigation }) {
                         w={50}
                         h={50}
                         resizeMode="contain"
+                        alt={ChecklistImage}
                       />
                     ) : (
                       <></>
