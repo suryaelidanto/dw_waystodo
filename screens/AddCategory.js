@@ -120,7 +120,14 @@ function AddCategory({ navigation }) {
           List Category
         </Text>
 
-        <Box mt={5} display="flex" flexDirection="row" flex={1}>
+        <Box
+          mt={5}
+          display="flex"
+          flexDirection="row"
+          flex={1}
+          w={"100%"}
+          flexWrap={"wrap"}
+        >
           {category?.map((item, i) => {
             return (
               <Box
@@ -130,7 +137,8 @@ function AddCategory({ navigation }) {
                 alignItems="center"
                 justifyContent="center"
                 key={i}
-                mx={2}
+                mr={2}
+                my={2}
                 // intinya dia ngambil dari data todo color kita find ngecompare index sama index item terus di modulus banyaknya todoColor
                 // object keys itu ngambil banyaknya length terus di - 1 biar modulus 4, jadi loop balik ke index awal lagi
                 bg={

@@ -13,6 +13,7 @@ import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Welcome from "./screens/Welcome";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import DetailList from "./screens/DetailList";
 
 function Container() {
   const NativeStack = createNativeStackNavigator();
@@ -58,13 +59,14 @@ function Container() {
     }
   }
 
+  async function isAsyncTokenExist() {
+    await AsyncStorage.getItem("token");
+    checkAuth();
+  }
+
   useEffect(() => {
-    (async () => {
-      if (await AsyncStorage.getItem("token")) return checkAuth();
-      setIsLoading(false);
-    })();
-    console.log("ini state", state);
-  }, [isLoading]);
+    isAsyncTokenExist();
+  }, []);
 
   function BottomTab() {
     return (
@@ -142,6 +144,7 @@ function Container() {
                 headerShown: false,
               }}
             />
+            <NativeStack.Screen name="DetailList" component={DetailList} />
           </NativeStack.Navigator>
         </>
       ) : (

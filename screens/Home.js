@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Box, Button, Image, Menu, Text } from "native-base";
-import { useContext, useState } from "react";
+import { Box, Button, Image, Menu, Text, FlatList } from "native-base";
+import { useContext, useState, useEffect } from "react";
 import { showMessage } from "react-native-flash-message";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
@@ -58,7 +58,7 @@ function Home({ navigation }) {
     },
   ];
 
-  let { data: list, refetch: refetchList } = useQuery(
+  let { data: list, refetch: listRefetch } = useQuery(
     "listCaches",
     async () => {
       let listResponse = await API.get("/List");
@@ -121,7 +121,6 @@ function Home({ navigation }) {
     dispatch({
       type: "LOGOUT_SUCCESS",
     });
-    console.log(state);
     showMessage({
       message: "Logout berhasil!",
       type: "success",
@@ -138,13 +137,128 @@ function Home({ navigation }) {
         { is_done: current_status == 0 ? 1 : 0 },
         { validateStatus: () => true }
       );
-      refetchList();
+      listRefetch();
     } catch (err) {
       showMessage({
         message: "Gagal mengubah status todo!",
         type: "danger",
       });
     }
+  }
+
+  useEffect(() => {
+    listRefetch();
+  }, [list]);
+
+  function TodoComponent(item, i) {
+    // dipisah buat nyari bg color dari index intinya
+    let listBgColor = todoColor?.find(
+      (item) => item.index === i % (Object.keys(todoColor).length - 1)
+    )?.bgColor;
+    // dipisah buat nyari bg color dari index intinya
+    let categoryBgColor = categoryColor?.find(
+      (item) => item.index === i % (Object.keys(categoryColor).length - 1)
+    )?.bgColor;
+    // nyari categoryName
+    let categoryName = category?.find(
+      (itemCategory) => itemCategory._id === item.category_id
+    )?.name;
+    return (
+      <Box
+        // intinya dia ngambil dari data todo color kita find ngecompare index sama index item terus di modulus banyaknya todoColor
+        // object keys itu ngambil banyaknya length terus di - 1 biar modulus 4, jadi loop balik ke index awal lagi
+        bg={listBgColor}
+        w={"100%"}
+        borderRadius={10}
+        display="flex"
+        flexDirection="row"
+        px={5}
+        py={5}
+        key={i}
+        my={2}
+        onClick={() =>
+          navigation.navigate("DetailList", {
+            listId: item._id,
+            listBgColor,
+            categoryBgColor,
+            categoryName,
+          })
+        }
+      >
+        <Box flex={2}>
+          <Text
+            fontWeight="bold"
+            fontSize={20}
+            textDecorationLine={item.is_done == 0 ? "none" : "line-through"}
+          >
+            {cutSentence(item.name, 15)}
+          </Text>
+          <Text
+            color="muted.500"
+            flex={1}
+            textDecorationLine={item.is_done == 0 ? "none" : "line-through"}
+          >
+            {cutSentence(item.description, 20)}
+          </Text>
+          <Text color="muted.500" display="flex" alignItems="center">
+            <FontAwesome
+              name="calendar"
+              size={15}
+              color="muted.500"
+              style={{ marginRight: 5 }}
+            />
+            {milisToDate(item.date)}
+          </Text>
+        </Box>
+        <Box flex={1}>
+          <Box
+            p={1}
+            borderRadius={10}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            // intinya dia ngambil dari data todo color kita find ngecompare index sama index item terus di modulus banyaknya todoColor
+            // object keys itu ngambil banyaknya length terus di - 1 biar modulus 4, jadi loop balik ke index awal lagi
+            bg={categoryBgColor}
+          >
+            <Text color="white" fontWeight="bold">
+              {/* intinya nyari id category yang sama terus return namenya aja kalau ketemu jadi pake find */}
+              {categoryName}
+            </Text>
+          </Box>
+          <Box
+            flex={1}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            {/* intinya buat ngatur buttonnya udah di klik belum, kalau udah ada checklistnya kalau belum ilangin */}
+            <Button
+              bg={item.is_done ? "white" : "muted.200"}
+              borderRadius={"100%"}
+              _hover={{ backgroundColor: "muted.300" }}
+              _pressed={{ backgroundColor: "muted.400" }}
+              mt={2}
+              w={50}
+              h={50}
+              onPress={(e) => handleUpdateIsDone(e, item._id, item.is_done)}
+            >
+              {item.is_done ? (
+                <Image
+                  source={ChecklistImage}
+                  w={50}
+                  h={50}
+                  resizeMode="contain"
+                  alt={ChecklistImage}
+                />
+              ) : (
+                <></>
+              )}
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    );
   }
 
   return (
@@ -185,118 +299,16 @@ function Home({ navigation }) {
       </Box>
 
       {/* list todo */}
-      <Box w={"90%"}>
-        {list?.map((item, i) => {
-          return (
-            <Box
-              // intinya dia ngambil dari data todo color kita find ngecompare index sama index item terus di modulus banyaknya todoColor
-              // object keys itu ngambil banyaknya length terus di - 1 biar modulus 4, jadi loop balik ke index awal lagi
-              bg={
-                todoColor?.find(
-                  (item) =>
-                    item.index === i % (Object.keys(todoColor).length - 1)
-                ).bgColor
-              }
-              w={"100%"}
-              borderRadius={10}
-              display="flex"
-              flexDirection="row"
-              px={5}
-              py={5}
-              key={i}
-              my={2}
-            >
-              <Box flex={2}>
-                <Text
-                  fontWeight="bold"
-                  fontSize={20}
-                  textDecorationLine={
-                    item.is_done == 0 ? "none" : "line-through"
-                  }
-                >
-                  {cutSentence(item.name, 15)}
-                </Text>
-                <Text
-                  color="muted.500"
-                  flex={1}
-                  textDecorationLine={
-                    item.is_done == 0 ? "none" : "line-through"
-                  }
-                >
-                  {cutSentence(item.description, 20)}
-                </Text>
-                <Text color="muted.500" display="flex" alignItems="center">
-                  <FontAwesome
-                    name="calendar"
-                    size={15}
-                    color="muted.500"
-                    style={{ marginRight: 5 }}
-                  />
-                  {milisToDate(item.date)}
-                </Text>
-              </Box>
-              <Box flex={1}>
-                <Box
-                  p={1}
-                  borderRadius={10}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  // intinya dia ngambil dari data todo color kita find ngecompare index sama index item terus di modulus banyaknya todoColor
-                  // object keys itu ngambil banyaknya length terus di - 1 biar modulus 4, jadi loop balik ke index awal lagi
-                  bg={
-                    categoryColor?.find(
-                      (item) =>
-                        item.index ===
-                        i % (Object.keys(categoryColor).length - 1)
-                    ).bgColor
-                  }
-                >
-                  <Text color="white" fontWeight="bold">
-                    {/* intinya nyari id category yang sama terus return namenya aja kalau ketemu jadi pake find */}
-                    {
-                      category?.find(
-                        (itemCategory) => itemCategory._id === item.category_id
-                      )?.name
-                    }
-                  </Text>
-                </Box>
-                <Box
-                  flex={1}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  {/* intinya buat ngatur buttonnya udah di klik belum, kalau udah ada checklistnya kalau belum ilangin */}
-                  <Button
-                    bg={item.is_done ? "white" : "muted.200"}
-                    borderRadius={"100%"}
-                    _hover={{ backgroundColor: "muted.300" }}
-                    _pressed={{ backgroundColor: "muted.400" }}
-                    mt={2}
-                    w={50}
-                    h={50}
-                    onPress={(e) =>
-                      handleUpdateIsDone(e, item._id, item.is_done)
-                    }
-                  >
-                    {item.is_done ? (
-                      <Image
-                        source={ChecklistImage}
-                        w={50}
-                        h={50}
-                        resizeMode="contain"
-                        alt={ChecklistImage}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </Button>
-                </Box>
-              </Box>
-            </Box>
-          );
-        })}
+      <Box w={"90%"} display="flex" flex={1}>
+        {list ? (
+          <FlatList
+            data={list}
+            renderItem={({ item, index }) => TodoComponent(item, index)}
+            keyExtractor={(item) => item._id}
+          />
+        ) : (
+          <></>
+        )}
       </Box>
     </Box>
   );
