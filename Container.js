@@ -1,17 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useContext, useEffect, useState } from "react";
 import FlashMessage from "react-native-flash-message";
 import Spinner from "react-native-loading-spinner-overlay";
 import { API, setAuthorization } from "./config/api";
 import { UserContext } from "./context/userContext";
 import Home from "./screens/Home";
+import AddList from "./screens/AddList";
+import AddCategory from "./screens/AddCategory";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Welcome from "./screens/Welcome";
+import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
 function Container() {
   const NativeStack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
   const [state, dispatch] = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -61,16 +66,75 @@ function Container() {
     console.log("ini state", state);
   }, [isLoading]);
 
+  function BottomTab() {
+    return (
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconType;
+            let iconName;
+            let iconColor;
+            if (route.name === "Home") {
+              iconType = "fa5";
+              iconName = "clipboard-list";
+              iconColor = focused ? "#FF5555" : "#D9D9D9";
+            }
+
+            if (route.name === "AddList") {
+              iconType = "material-icon";
+              iconName = "playlist-add";
+              iconColor = focused ? "#FF5555" : "#D9D9D9";
+            }
+
+            if (route.name === "AddCategory") {
+              iconType = "material-icon";
+              iconName = "category";
+              iconColor = focused ? "#FF5555" : "#D9D9D9";
+            }
+
+            return iconType == "fa5" ? (
+              <FontAwesome5 name={iconName} size={size} color={iconColor} />
+            ) : (
+              <MaterialIcons name={iconName} size={size} color={iconColor} />
+            );
+          },
+        })}
+      >
+        <Tab.Screen
+          name="Home"
+          component={Home}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="AddList"
+          component={AddList}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="AddCategory"
+          component={AddCategory}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Tab.Navigator>
+    );
+  }
+
   return (
     <>
       {isLoading ? (
         <Spinner visible={isLoading} />
       ) : state.isLogin ? (
         <>
-          <NativeStack.Navigator initialRouteName="Home">
+          <NativeStack.Navigator initialRouteName="Main">
             <NativeStack.Screen
-              name="Home"
-              component={Home}
+              name="Main"
+              component={BottomTab}
               options={{
                 headerShown: false,
               }}

@@ -39,7 +39,7 @@ function Login({ navigation }) {
       // harus di set biar ganteng
       setAuthorization(response.data.token);
       //Login berhasil cus navigate ke home 😁
-      navigation.navigate("Home");
+      navigation.navigate("Main");
     } catch (err) {
       showMessage({
         message: "Email / password salah!",
