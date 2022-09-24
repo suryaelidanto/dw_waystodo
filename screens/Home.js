@@ -5,6 +5,9 @@ import { showMessage } from "react-native-flash-message";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
 import { UserContext } from "../context/userContext";
+import ChecklistImage from "../assets/checklist-todo.png";
+import DefaultProfile from "../assets/default-profile.jpg";
+import { FontAwesome } from "@expo/vector-icons";
 
 function Home({ navigation }) {
   const [state, dispatch] = useContext(UserContext);
@@ -55,11 +58,14 @@ function Home({ navigation }) {
     },
   ];
 
-  let { data: list } = useQuery("listCaches", async () => {
-    let listResponse = await API.get("/List");
-    console.log("response list", listResponse.data);
-    return listResponse.data;
-  });
+  let { data: list, refetch: refetchList } = useQuery(
+    "listCaches",
+    async () => {
+      let listResponse = await API.get("/List");
+      console.log("response list", listResponse.data);
+      return listResponse.data;
+    }
+  );
 
   let { data: category } = useQuery("categoryCaches", async () => {
     let categoryResponse = await API.get("/Category");
@@ -74,6 +80,42 @@ function Home({ navigation }) {
       : sentence;
   }
 
+  // intinya buat ngubah milisecond ke date, lebih gampang pake milis bre, ngga usah nyimpen data date 😂
+  function milisToDate(milis) {
+    let date = new Date(milis);
+    let convertMonth = (month) => {
+      switch (month) {
+        case 0:
+          return "Januari";
+        case 1:
+          return "Februari";
+        case 2:
+          return "Maret";
+        case 3:
+          return "April";
+        case 4:
+          return "Mei";
+        case 5:
+          return "Juni";
+        case 6:
+          return "Juli";
+        case 7:
+          return "Agustus";
+        case 8:
+          return "September";
+        case 9:
+          return "Oktober";
+        case 10:
+          return "November";
+        case 11:
+          return "Desember";
+      }
+    };
+    return `${date.getDate()} ${convertMonth(
+      date.getMonth()
+    )} ${date.getFullYear()}`;
+  }
+
   function handleLogout() {
     AsyncStorage.removeItem("token");
     dispatch({
@@ -85,6 +127,24 @@ function Home({ navigation }) {
       type: "success",
     });
     navigation.navigate("Welcome");
+  }
+
+  async function handleUpdateIsDone(e, id_todo, current_status) {
+    e.preventDefault();
+    try {
+      // intinya update kebalikannya dari id todo yang dilempar di parameter
+      await API.patch(
+        `/List/${id_todo}`,
+        { is_done: current_status == 0 ? 1 : 0 },
+        { validateStatus: () => true }
+      );
+      refetchList();
+    } catch (err) {
+      showMessage({
+        message: "Gagal mengubah status todo!",
+        type: "danger",
+      });
+    }
   }
 
   return (
@@ -107,9 +167,7 @@ function Home({ navigation }) {
               return (
                 <Button variant="ghost" {...triggerProps}>
                   <Image
-                    source={{
-                      uri: "https://assets.promediateknologi.com/crop/0x0:0x0/750x500/photo/2022/03/06/539978531.jpg",
-                    }}
+                    source={DefaultProfile}
                     w={50}
                     h={50}
                     borderRadius="100%"
@@ -151,10 +209,18 @@ function Home({ navigation }) {
                 <Text fontWeight="bold" fontSize={20}>
                   {cutSentence(item.name, 15)}
                 </Text>
-                <Text color="muted.500">
+                <Text color="muted.500" flex={1}>
                   {cutSentence(item.description, 20)}
                 </Text>
-                <Text color="muted.500">{item.date}</Text>
+                <Text color="muted.500" display="flex" alignItems="center">
+                  <FontAwesome
+                    name="calendar"
+                    size={15}
+                    color="muted.500"
+                    style={{ marginRight: 5 }}
+                  />
+                  {milisToDate(item.date)}
+                </Text>
               </Box>
               <Box flex={1}>
                 <Box
@@ -174,6 +240,7 @@ function Home({ navigation }) {
                   }
                 >
                   <Text color="white" fontWeight="bold">
+                    {/* intinya nyari id category yang sama terus return namenya aja kalau ketemu jadi pake find */}
                     {
                       category?.find(
                         (itemCategory) => itemCategory._id === item.category_id
@@ -187,13 +254,30 @@ function Home({ navigation }) {
                   alignItems="center"
                   justifyContent="center"
                 >
+                  {/* intinya buat ngatur buttonnya udah di klik belum, kalau udah ada checklistnya kalau belum ilangin */}
                   <Button
-                    bg="muted.300"
+                    bg={item.is_done ? "white" : "muted.200"}
                     borderRadius={"100%"}
+                    _hover={{ backgroundColor: "muted.300" }}
+                    _pressed={{ backgroundColor: "muted.400" }}
                     mt={2}
                     w={50}
                     h={50}
-                  ></Button>
+                    onPress={(e) =>
+                      handleUpdateIsDone(e, item._id, item.is_done)
+                    }
+                  >
+                    {item.is_done ? (
+                      <Image
+                        source={ChecklistImage}
+                        w={50}
+                        h={50}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </Button>
                 </Box>
               </Box>
             </Box>
