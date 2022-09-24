@@ -206,10 +206,22 @@ function Home({ navigation }) {
               my={2}
             >
               <Box flex={2}>
-                <Text fontWeight="bold" fontSize={20}>
+                <Text
+                  fontWeight="bold"
+                  fontSize={20}
+                  textDecorationLine={
+                    item.is_done == 0 ? "none" : "line-through"
+                  }
+                >
                   {cutSentence(item.name, 15)}
                 </Text>
-                <Text color="muted.500" flex={1}>
+                <Text
+                  color="muted.500"
+                  flex={1}
+                  textDecorationLine={
+                    item.is_done == 0 ? "none" : "line-through"
+                  }
+                >
                   {cutSentence(item.description, 20)}
                 </Text>
                 <Text color="muted.500" display="flex" alignItems="center">
