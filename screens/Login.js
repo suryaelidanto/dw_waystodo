@@ -55,6 +55,7 @@ function Login({ navigation }) {
         width={275}
         height={275}
         resizeMode="contain"
+        alt={WaysTODOAuthImage}
       />
       <Box display="flex" w={"90%"}>
         <Text fontWeight="bold" fontSize={30}>

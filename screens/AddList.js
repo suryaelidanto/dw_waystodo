@@ -122,7 +122,6 @@ function AddCategory({ navigation }) {
           />
           <Select
             defaultValue={dataList.category_id}
-            accessibilityLabel="Pilih category..."
             placeholder="Pilih category..."
             w={"100%"}
             h={50}

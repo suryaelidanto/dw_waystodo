@@ -15,6 +15,7 @@ function Welcome({ navigation }) {
         width={300}
         height={300}
         resizeMode="contain"
+        alt={WaysTODOWelcomeImage}
       />
       <Text textAlign="center" width={250} marginTop={5}>
         Write your activity and finish your activity. Fast, Simple and Easy to
