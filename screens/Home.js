@@ -26,10 +26,17 @@ function Home({ navigation }) {
   const [shouldOverlapWithTrigger] = useState(false);
   const [dataFilter, setDataFilter] = useState({
     search: "",
-    date: "",
+    date: null,
     category: "",
-    status: "",
+    status: null,
   });
+
+  const [tempDataFilter, setTempDataFilter] = useState({
+    date: null,
+    category: "",
+    status: null,
+  });
+
   const todoColor = [
     {
       index: 0,
@@ -287,6 +294,20 @@ function Home({ navigation }) {
     });
   }
 
+  // buat sebelum save, sesudah save di lempar ke dataFilter
+  function handleChangeTextTempFilter(name, value) {
+    console.log("temp name", name, "temp value", value);
+    name == "date"
+      ? setTempDataFilter({
+          ...tempDataFilter,
+          [name]: value.replace(/[^0-9]/g, ""),
+        })
+      : setTempDataFilter({
+          ...tempDataFilter,
+          [name]: value,
+        });
+  }
+
   return (
     <Box display="flex" flex={1} alignItems="center" bg="white">
       <Box display="flex" flexDirection="row" w={"85%"} mt={10} mb={5}>
@@ -363,7 +384,14 @@ function Home({ navigation }) {
           <Center>
             <Modal
               isOpen={showModalFilter}
-              onClose={() => setShowModalFilter(false)}
+              onClose={() => {
+                setTempDataFilter({
+                  date: null,
+                  category: "",
+                  status: null,
+                });
+                setShowModalFilter(false);
+              }}
             >
               <Modal.Content maxWidth="400px">
                 <Modal.CloseButton />
@@ -378,10 +406,10 @@ function Home({ navigation }) {
                     flex={1}
                     fontSize={15}
                     borderRadius="sm"
-                    value={dataFilter.date}
+                    defaultValue={dataFilter.date}
                     borderColor="muted.500"
                     onChangeText={(value) =>
-                      handleChangeTextFilter("date", value)
+                      handleChangeTextTempFilter("date", value)
                     }
                   />
                   <Select
@@ -399,9 +427,10 @@ function Home({ navigation }) {
                       bg: "muted.500",
                     }}
                     onValueChange={(value) =>
-                      handleChangeTextFilter("category", value)
+                      handleChangeTextTempFilter("category", value)
                     }
                   >
+                    <Select.Item label={"Semua"} value={""} />
                     {category?.map((item, i) => (
                       <Select.Item label={item.name} value={item._id} key={i} />
                     ))}
@@ -421,11 +450,12 @@ function Home({ navigation }) {
                       bg: "muted.500",
                     }}
                     onValueChange={(value) =>
-                      handleChangeTextFilter("status", value)
+                      handleChangeTextTempFilter("status", value)
                     }
                   >
-                    <Select.Item label={"Selesai"} value={1} />
+                    <Select.Item label={"Semua"} value={null} />
                     <Select.Item label={"Belum"} value={0} />
+                    <Select.Item label={"Selesai"} value={1} />
                   </Select>
                 </Modal.Body>
                 <Modal.Footer>
@@ -434,6 +464,11 @@ function Home({ navigation }) {
                       variant="ghost"
                       colorScheme="blueGray"
                       onPress={() => {
+                        setTempDataFilter({
+                          date: null,
+                          category: "",
+                          status: null,
+                        });
                         setShowModalFilter(false);
                       }}
                     >
@@ -441,6 +476,17 @@ function Home({ navigation }) {
                     </Button>
                     <Button
                       onPress={() => {
+                        setDataFilter({
+                          ...dataFilter,
+                          date: tempDataFilter.date,
+                          category: tempDataFilter.category,
+                          status: tempDataFilter.status,
+                        });
+                        setTempDataFilter({
+                          date: null,
+                          category: "",
+                          status: null,
+                        });
                         setShowModalFilter(false);
                       }}
                     >

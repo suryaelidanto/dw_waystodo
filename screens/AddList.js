@@ -3,8 +3,6 @@ import { useQuery, useMutation } from "react-query";
 import { API } from "../config/api";
 import { showMessage } from "react-native-flash-message";
 import { useState } from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Platform } from "react-native";
 
 function AddCategory({ navigation }) {
   const [dataList, setDataList] = useState({
@@ -141,35 +139,20 @@ function AddCategory({ navigation }) {
               <Select.Item label={item.name} value={item._id} key={i} />
             ))}
           </Select>
-          {Platform.OS == "web" ? (
-            <Input
-              w={"100%"}
-              bg="muted.200"
-              placeholder="Date (miliseconds)"
-              type="number"
-              keyboardType="numeric"
-              py={3}
-              my={2}
-              value={dataList.date}
-              fontSize={15}
-              borderRadius="sm"
-              borderColor="muted.500"
-              onChangeText={(value) => handleChangeText("date", value)}
-            />
-          ) : (
-            <DateTimePicker
-              value={new Date()}
-              w={"100%"}
-              h={50}
-              bg="muted.200"
-              placeholder="Date"
-              py={3}
-              fontSize={15}
-              borderRadius="sm"
-              borderColor="muted.500"
-              onChangeText={(value) => handleChangeText("date", value)}
-            />
-          )}
+          <Input
+            w={"100%"}
+            bg="muted.200"
+            placeholder="Date (miliseconds)"
+            type="number"
+            keyboardType="numeric"
+            py={3}
+            my={2}
+            value={dataList.date}
+            fontSize={15}
+            borderRadius="sm"
+            borderColor="muted.500"
+            onChangeText={(value) => handleChangeText("date", value)}
+          />
           <TextArea
             w={"100%"}
             h={100}
