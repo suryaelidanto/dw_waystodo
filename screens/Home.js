@@ -26,15 +26,15 @@ function Home({ navigation }) {
   const [shouldOverlapWithTrigger] = useState(false);
   const [dataFilter, setDataFilter] = useState({
     search: "",
-    date: null,
+    date: "",
     category: "",
-    status: null,
+    status: "",
   });
 
   const [tempDataFilter, setTempDataFilter] = useState({
-    date: null,
+    date: "",
     category: "",
-    status: null,
+    status: "",
   });
 
   const todoColor = [
@@ -292,6 +292,7 @@ function Home({ navigation }) {
       ...dataFilter,
       [name]: value,
     });
+    console.log("current data filter", dataFilter);
   }
 
   // buat sebelum save, sesudah save di lempar ke dataFilter
@@ -307,6 +308,31 @@ function Home({ navigation }) {
           [name]: value,
         });
   }
+
+  // buat filter array, ambil dari github ini : https://gist.github.com/jherax/f11d669ba286f21b7a2dcff69621eb72
+  // function filterArray(array, filters) {
+  //   const filterKeys = Object.keys(filters);
+  //   return array.filter((item) => {
+  //     // validates all filter criteria
+  //     return filterKeys.every((key) => {
+  //       // ignores non-function predicates
+  //       if (typeof filters[key] !== "function") return true;
+  //       return filters[key](item[key]);
+  //     });
+  //   });
+  // }
+
+  // function filterList(listToFilter) {
+  //   const filters = {
+  //     name: name => name.toLowerCase() === dataFilter.search.toLowerCase(),
+  //     // date: date => ['blue', 'black'].includes(color.toLowerCase()),
+  //     // category: category => locations.find(x => ['JAPAN', 'USA'].includes(x.toUpperCase())),
+  //     // status: status => details.length < 30 && details.width >= 70,
+  //   };
+  //   const filtered = filterArray(listToFilter, filters);
+  //   console.log("filtered bois", filtered);
+  //   console.log("dataFilter.search.toLowerCase()", dataFilter.search.toLowerCase());
+  // }
 
   return (
     <Box display="flex" flex={1} alignItems="center" bg="white">
@@ -386,9 +412,9 @@ function Home({ navigation }) {
               isOpen={showModalFilter}
               onClose={() => {
                 setTempDataFilter({
-                  date: null,
+                  ...tempDataFilter,
                   category: "",
-                  status: null,
+                  status: "",
                 });
                 setShowModalFilter(false);
               }}
@@ -407,6 +433,7 @@ function Home({ navigation }) {
                     fontSize={15}
                     borderRadius="sm"
                     defaultValue={dataFilter.date}
+                    value={tempDataFilter.date}
                     borderColor="muted.500"
                     onChangeText={(value) =>
                       handleChangeTextTempFilter("date", value)
@@ -453,9 +480,9 @@ function Home({ navigation }) {
                       handleChangeTextTempFilter("status", value)
                     }
                   >
-                    <Select.Item label={"Semua"} value={null} />
-                    <Select.Item label={"Belum"} value={0} />
-                    <Select.Item label={"Selesai"} value={1} />
+                    <Select.Item label={"Semua"} value={""} />
+                    <Select.Item label={"Belum"} value={"0"} />
+                    <Select.Item label={"Selesai"} value={"1"} />
                   </Select>
                 </Modal.Body>
                 <Modal.Footer>
@@ -465,9 +492,9 @@ function Home({ navigation }) {
                       colorScheme="blueGray"
                       onPress={() => {
                         setTempDataFilter({
-                          date: null,
+                          ...tempDataFilter,
                           category: "",
-                          status: null,
+                          status: "",
                         });
                         setShowModalFilter(false);
                       }}
@@ -483,9 +510,9 @@ function Home({ navigation }) {
                           status: tempDataFilter.status,
                         });
                         setTempDataFilter({
-                          date: null,
+                          ...tempDataFilter,
                           category: "",
-                          status: null,
+                          status: "",
                         });
                         setShowModalFilter(false);
                       }}
@@ -505,13 +532,174 @@ function Home({ navigation }) {
         {list ? (
           <FlatList
             data={
-              !dataFilter.search
+              // hanya ketika semuanya kosong maka datanya apa adanya
+              !dataFilter.search &&
+              !dataFilter.category &&
+              !dataFilter.date &&
+              !dataFilter.status
                 ? list
-                : list.filter((item) =>
-                    item.name
-                      .toLowerCase()
-                      .includes(dataFilter.search.toLowerCase())
-                  )
+                : list.filter((item) => {
+                    // filter search
+                    if (dataFilter.search) {
+                      return item.name
+                        .toLowerCase()
+                        .includes(dataFilter.search.toLowerCase());
+                    }
+
+                    // filter date
+                    if (dataFilter.date) {
+                      const itemDate = milisToDate(item.date).split(" ")[0];
+                      const filterDate = milisToDate(
+                        parseInt(dataFilter.date)
+                      ).split(" ")[0];
+                      console.log("item date", itemDate);
+                      console.log("filter date", filterDate);
+                      return itemDate == filterDate;
+                    }
+
+                    // filter category
+                    if (dataFilter.category) {
+                      let categoryId = category.find(
+                        (itemCategory) => itemCategory._id === item.category_id
+                      )._id;
+                      return (
+                        categoryId.toString() == dataFilter.category.toString()
+                      );
+                    }
+
+                    // filter status
+                    if (dataFilter.status) {
+                      return (
+                        item.is_done.toString() == dataFilter.status.toString()
+                      );
+                    }
+                  })
+              // filter neraka 😂😂😂😂😂😂😂😂😂😂
+              // list.filter((item) => {
+              //   if (
+              //     // search
+              //     dataFilter.search &&
+              //     (dataFilter.status == "" || dataFilter.status == null) &&
+              //     !dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     return item.name
+              //       .toLowerCase()
+              //       .includes(dataFilter.search.toLowerCase());
+              //   } else if (
+              //     dataFilter.search &&
+              //     (dataFilter.status != "" || dataFilter.status != null) &&
+              //     !dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     return (
+              //       item.name
+              //         .toLowerCase()
+              //         .includes(dataFilter.search.toLowerCase()) &&
+              //       item.is_done.toString() == dataFilter.status.toString()
+              //     );
+              //   } else if (
+              //     dataFilter.search &&
+              //     (dataFilter.status != "" || dataFilter.status != null) &&
+              //     dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     let categoryId = category.find(
+              //       (itemCategory) => itemCategory._id === item.category_id
+              //     )._id;
+              //     return (
+              //       item.name
+              //         .toLowerCase()
+              //         .includes(dataFilter.search.toLowerCase()) &&
+              //       item.is_done.toString() ==
+              //         dataFilter.status.toString() &&
+              //       categoryId.toString() == dataFilter.category.toString()
+              //     );
+              //   } else if (
+              //     // status
+              //     !dataFilter.search &&
+              //     (dataFilter.status != "" || dataFilter.status != null) &&
+              //     !dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     return (
+              //       item.is_done.toString() == dataFilter.status.toString()
+              //     );
+              //   } else if (
+              //     dataFilter.search &&
+              //     (dataFilter.status != "" || dataFilter.status != null) &&
+              //     !dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     return (
+              //       item.name
+              //         .toLowerCase()
+              //         .includes(dataFilter.search.toLowerCase()) &&
+              //       item.is_done.toString() == dataFilter.status.toString()
+              //     );
+              //   } else if (
+              //     dataFilter.search &&
+              //     (dataFilter.status != "" || dataFilter.status != null) &&
+              //     dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     let categoryId = category.find(
+              //       (itemCategory) => itemCategory._id === item.category_id
+              //     )._id;
+              //     return (
+              //       item.name
+              //         .toLowerCase()
+              //         .includes(dataFilter.search.toLowerCase()) &&
+              //       item.is_done.toString() ==
+              //         dataFilter.status.toString() &&
+              //       categoryId.toString() == dataFilter.category.toString()
+              //     );
+              //   } else if (
+              //     !dataFilter.search &&
+              //     (dataFilter.status == "" || dataFilter.status == null) &&
+              //     dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     // category
+              //     let categoryId = category.find(
+              //       (itemCategory) => itemCategory._id === item.category_id
+              //     )._id;
+              //     return (
+              //       categoryId.toString() == dataFilter.category.toString()
+              //     );
+              //   } else if (
+              //     !dataFilter.search &&
+              //     (dataFilter.status != "" || dataFilter.status != null) &&
+              //     dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     let categoryId = category.find(
+              //       (itemCategory) => itemCategory._id === item.category_id
+              //     )._id;
+              //     return (
+              //       item.is_done.toString() ==
+              //         dataFilter.status.toString() &&
+              //       categoryId.toString() == dataFilter.category.toString()
+              //     );
+              //   } else if (
+              //     dataFilter.search &&
+              //     (dataFilter.status != "" || dataFilter.status != null) &&
+              //     dataFilter.category &&
+              //     !dataFilter.date
+              //   ) {
+              //     let categoryId = category.find(
+              //       (itemCategory) => itemCategory._id === item.category_id
+              //     )._id;
+              //     return (
+              //       item.name
+              //         .toLowerCase()
+              //         .includes(dataFilter.search.toLowerCase()) &&
+              //       item.is_done.toString() ==
+              //         dataFilter.status.toString() &&
+              //       categoryId.toString() == dataFilter.category.toString()
+              //     );
+              //   }
+              // })
             }
             renderItem={({ item, index }) => TodoComponent(item, index)}
             keyExtractor={(item) => item._id}
