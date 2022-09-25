@@ -280,6 +280,7 @@ function Home({ navigation }) {
   }
 
   function handleChangeTextFilter(name, value) {
+    console.log("punya", name, "valuenya", value);
     setDataFilter({
       ...dataFilter,
       [name]: value,
@@ -335,11 +336,18 @@ function Home({ navigation }) {
             fontSize={15}
             borderRadius="sm"
             borderColor="muted.500"
+            value={dataFilter.search}
             onChangeText={(value) => handleChangeTextFilter("search", value)}
           />
         </Box>
         <Box display="flex" flexDirection="column" w={"100%"}>
-          <Button onPress={() => setShowModalFilter(true)} my={3} bg="error.500" _hover={{backgroundColor: "error.600"}} _pressed={{backgroundColor: "error.700"}}>
+          <Button
+            onPress={() => setShowModalFilter(true)}
+            my={3}
+            bg="error.500"
+            _hover={{ backgroundColor: "error.600" }}
+            _pressed={{ backgroundColor: "error.700" }}
+          >
             <Text
               fontSize={15}
               fontWeight="bold"
@@ -370,6 +378,7 @@ function Home({ navigation }) {
                     flex={1}
                     fontSize={15}
                     borderRadius="sm"
+                    value={dataFilter.date}
                     borderColor="muted.500"
                     onChangeText={(value) =>
                       handleChangeTextFilter("date", value)
@@ -442,57 +451,6 @@ function Home({ navigation }) {
               </Modal.Content>
             </Modal>
           </Center>
-          {/* <Input
-            bg="muted.200"
-            placeholder="Date (miliseconds)"
-            h={50}
-            mt={2}
-            py={3}
-            flex={1}
-            fontSize={15}
-            borderRadius="sm"
-            borderColor="muted.500"
-            onChangeText={(value) => handleChangeTextFilter("date", value)}
-          />
-          <Select
-            defaultValue={dataFilter.category}
-            placeholder="Category"
-            h={50}
-            mt={2}
-            py={3}
-            flex={1}
-            bg="muted.200"
-            fontSize={15}
-            borderRadius="sm"
-            borderColor="muted.500"
-            _selectedItem={{
-              bg: "muted.500",
-            }}
-            onValueChange={(value) => handleChangeTextFilter("category", value)}
-          >
-            {category?.map((item, i) => (
-              <Select.Item label={item.name} value={item._id} key={i} />
-            ))}
-          </Select>
-          <Select
-            defaultValue={dataFilter.status}
-            placeholder="Status"
-            h={50}
-            bg="muted.200"
-            py={3}
-            mt={2}
-            flex={1}
-            fontSize={15}
-            borderRadius="sm"
-            borderColor="muted.500"
-            _selectedItem={{
-              bg: "muted.500",
-            }}
-            onValueChange={(value) => handleChangeTextFilter("status", value)}
-          >
-            <Select.Item label={"Selesai"} value={1} />
-            <Select.Item label={"Belum"} value={0} />
-          </Select> */}
         </Box>
       </Box>
       {/* end kolom filter */}
@@ -500,7 +458,15 @@ function Home({ navigation }) {
       <Box w={"85%"} display="flex" flex={1}>
         {list ? (
           <FlatList
-            data={list}
+            data={
+              !dataFilter.search
+                ? list
+                : list.filter((item) =>
+                    item.name
+                      .toLowerCase()
+                      .includes(dataFilter.search.toLowerCase())
+                  )
+            }
             renderItem={({ item, index }) => TodoComponent(item, index)}
             keyExtractor={(item) => item._id}
           />
