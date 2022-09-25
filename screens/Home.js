@@ -1,5 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Box, Button, Image, Menu, Text, FlatList } from "native-base";
+import {
+  Box,
+  Button,
+  Image,
+  Menu,
+  Text,
+  FlatList,
+  Input,
+  Select,
+  Modal,
+  Center,
+} from "native-base";
 import { useContext, useState, useEffect } from "react";
 import { showMessage } from "react-native-flash-message";
 import { useQuery } from "react-query";
@@ -7,11 +18,18 @@ import { API } from "../config/api";
 import { UserContext } from "../context/userContext";
 import ChecklistImage from "../assets/checklist-todo.png";
 import DefaultProfile from "../assets/default-profile.jpg";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, AntDesign } from "@expo/vector-icons";
 
 function Home({ navigation }) {
   const [state, dispatch] = useContext(UserContext);
+  const [showModalFilter, setShowModalFilter] = useState(false);
   const [shouldOverlapWithTrigger] = useState(false);
+  const [dataFilter, setDataFilter] = useState({
+    search: "",
+    date: "",
+    category: "",
+    status: "",
+  });
   const todoColor = [
     {
       index: 0,
@@ -261,9 +279,17 @@ function Home({ navigation }) {
     );
   }
 
+  function handleChangeTextFilter(name, value) {
+    setDataFilter({
+      ...dataFilter,
+      [name]: value,
+    });
+  }
+
   return (
     <Box display="flex" flex={1} alignItems="center" bg="white">
-      <Box display="flex" flexDirection="row" w={"85%"} my={10}>
+      <Box display="flex" flexDirection="row" w={"85%"} mt={10} mb={5}>
+        {/* profile  */}
         <Box flex={1} justifyContent="center" mx={2}>
           <Text fontWeight="bold" fontSize={30}>
             Hi {state?.data?.user?.firstName}
@@ -272,6 +298,7 @@ function Home({ navigation }) {
             {list && Object.keys(list).length} Lists
           </Text>
         </Box>
+        {/* end-profile */}
         <Box flex={1} justifyContent="center" alignItems="flex-end" mx={2}>
           <Menu
             w="160"
@@ -297,9 +324,180 @@ function Home({ navigation }) {
           </Menu>
         </Box>
       </Box>
-
+      {/* kolom filter */}
+      <Box display="flex" w={"85%"} flexDirection="column">
+        <Box display="flex" flexDirection="row" w={"100%"}>
+          <Input
+            w={"100%"}
+            bg="muted.200"
+            placeholder="Search List..."
+            py={3}
+            fontSize={15}
+            borderRadius="sm"
+            borderColor="muted.500"
+            onChangeText={(value) => handleChangeTextFilter("search", value)}
+          />
+        </Box>
+        <Box display="flex" flexDirection="column" w={"100%"}>
+          <Button onPress={() => setShowModalFilter(true)} my={3} bg="error.500" _hover={{backgroundColor: "error.600"}} _pressed={{backgroundColor: "error.700"}}>
+            <Text
+              fontSize={15}
+              fontWeight="bold"
+              color="white"
+              display="flex"
+              flexDirection="row"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <AntDesign name="filter" size={20} color="white" /> Filter
+            </Text>
+          </Button>
+          <Center>
+            <Modal
+              isOpen={showModalFilter}
+              onClose={() => setShowModalFilter(false)}
+            >
+              <Modal.Content maxWidth="400px">
+                <Modal.CloseButton />
+                <Modal.Header>Filter</Modal.Header>
+                <Modal.Body display="flex" flexDirection="column" w={"100%"}>
+                  <Input
+                    bg="muted.200"
+                    placeholder="Date (miliseconds)"
+                    h={50}
+                    mt={2}
+                    py={3}
+                    flex={1}
+                    fontSize={15}
+                    borderRadius="sm"
+                    borderColor="muted.500"
+                    onChangeText={(value) =>
+                      handleChangeTextFilter("date", value)
+                    }
+                  />
+                  <Select
+                    defaultValue={dataFilter.category}
+                    placeholder="Category"
+                    h={50}
+                    mt={2}
+                    py={3}
+                    flex={1}
+                    bg="muted.200"
+                    fontSize={15}
+                    borderRadius="sm"
+                    borderColor="muted.500"
+                    _selectedItem={{
+                      bg: "muted.500",
+                    }}
+                    onValueChange={(value) =>
+                      handleChangeTextFilter("category", value)
+                    }
+                  >
+                    {category?.map((item, i) => (
+                      <Select.Item label={item.name} value={item._id} key={i} />
+                    ))}
+                  </Select>
+                  <Select
+                    defaultValue={dataFilter.status}
+                    placeholder="Status"
+                    h={50}
+                    bg="muted.200"
+                    py={3}
+                    mt={2}
+                    flex={1}
+                    fontSize={15}
+                    borderRadius="sm"
+                    borderColor="muted.500"
+                    _selectedItem={{
+                      bg: "muted.500",
+                    }}
+                    onValueChange={(value) =>
+                      handleChangeTextFilter("status", value)
+                    }
+                  >
+                    <Select.Item label={"Selesai"} value={1} />
+                    <Select.Item label={"Belum"} value={0} />
+                  </Select>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button.Group space={2}>
+                    <Button
+                      variant="ghost"
+                      colorScheme="blueGray"
+                      onPress={() => {
+                        setShowModalFilter(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onPress={() => {
+                        setShowModalFilter(false);
+                      }}
+                    >
+                      Save
+                    </Button>
+                  </Button.Group>
+                </Modal.Footer>
+              </Modal.Content>
+            </Modal>
+          </Center>
+          {/* <Input
+            bg="muted.200"
+            placeholder="Date (miliseconds)"
+            h={50}
+            mt={2}
+            py={3}
+            flex={1}
+            fontSize={15}
+            borderRadius="sm"
+            borderColor="muted.500"
+            onChangeText={(value) => handleChangeTextFilter("date", value)}
+          />
+          <Select
+            defaultValue={dataFilter.category}
+            placeholder="Category"
+            h={50}
+            mt={2}
+            py={3}
+            flex={1}
+            bg="muted.200"
+            fontSize={15}
+            borderRadius="sm"
+            borderColor="muted.500"
+            _selectedItem={{
+              bg: "muted.500",
+            }}
+            onValueChange={(value) => handleChangeTextFilter("category", value)}
+          >
+            {category?.map((item, i) => (
+              <Select.Item label={item.name} value={item._id} key={i} />
+            ))}
+          </Select>
+          <Select
+            defaultValue={dataFilter.status}
+            placeholder="Status"
+            h={50}
+            bg="muted.200"
+            py={3}
+            mt={2}
+            flex={1}
+            fontSize={15}
+            borderRadius="sm"
+            borderColor="muted.500"
+            _selectedItem={{
+              bg: "muted.500",
+            }}
+            onValueChange={(value) => handleChangeTextFilter("status", value)}
+          >
+            <Select.Item label={"Selesai"} value={1} />
+            <Select.Item label={"Belum"} value={0} />
+          </Select> */}
+        </Box>
+      </Box>
+      {/* end kolom filter */}
       {/* list todo */}
-      <Box w={"90%"} display="flex" flex={1}>
+      <Box w={"85%"} display="flex" flex={1}>
         {list ? (
           <FlatList
             data={list}
