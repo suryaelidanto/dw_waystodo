@@ -1,9 +1,9 @@
 import { Box, Button, Image, Input, Text } from "native-base";
-import { useMutation } from "react-query";
 import { useState } from "react";
+import { showMessage } from "react-native-flash-message";
+import { useMutation } from "react-query";
 import WaysTODOAuthImage from "../assets/waystodo-auth.png";
 import { API } from "../config/api";
-import { showMessage } from "react-native-flash-message";
 
 function Register({ navigation }) {
   const [dataRegister, setDataRegister] = useState({
@@ -75,7 +75,7 @@ function Register({ navigation }) {
         });
       }
 
-      console.log(response);
+      // console.log(response);
 
       showMessage({
         message: "Register berhasil! Silahkan Login 😁",

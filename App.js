@@ -2,10 +2,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { extendTheme, NativeBaseProvider } from "native-base";
 import React from "react";
+import { LogBox } from "react-native";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Container from "./Container";
 import { UserContextProvider } from "./context/userContext";
-
+// buat ngilangin segala notifikasi, jangan lupa comment kalau mau development lagi (mungkin di android)
+LogBox.ignoreAllLogs();
 export default function App() {
   const [fontsLoaded] = useFonts({
     AvenirLTStdBlack: require("./assets/fonts/AvenirLTStd-Black.otf"),

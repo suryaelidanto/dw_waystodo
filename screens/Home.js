@@ -1,24 +1,16 @@
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Box,
-  Button,
-  Image,
-  Menu,
-  Text,
-  FlatList,
-  Input,
-  Select,
-  Modal,
-  Center,
+  Button, Center, FlatList, Image, Input, Menu, Modal, Select, Text
 } from "native-base";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { showMessage } from "react-native-flash-message";
 import { useQuery } from "react-query";
-import { API } from "../config/api";
-import { UserContext } from "../context/userContext";
 import ChecklistImage from "../assets/checklist-todo.png";
 import DefaultProfile from "../assets/default-profile.jpg";
-import { FontAwesome, AntDesign } from "@expo/vector-icons";
+import { API } from "../config/api";
+import { UserContext } from "../context/userContext";
 
 function Home({ navigation }) {
   const [state, dispatch] = useContext(UserContext);
@@ -87,14 +79,14 @@ function Home({ navigation }) {
     "listCaches",
     async () => {
       let listResponse = await API.get("/List");
-      console.log("response list", listResponse.data);
+      // console.log("response list", listResponse.data);
       return listResponse.data;
     }
   );
 
   let { data: category } = useQuery("categoryCaches", async () => {
     let categoryResponse = await API.get("/Category");
-    console.log("category list", categoryResponse.data);
+    // console.log("category list", categoryResponse.data);
     return categoryResponse.data;
   });
 
@@ -150,7 +142,6 @@ function Home({ navigation }) {
       message: "Logout berhasil!",
       type: "success",
     });
-    navigation.navigate("Welcome");
   }
 
   async function handleUpdateIsDone(e, id_todo, current_status) {
@@ -287,17 +278,17 @@ function Home({ navigation }) {
   }
 
   function handleChangeTextFilter(name, value) {
-    console.log("punya", name, "valuenya", value);
+    // console.log("punya", name, "valuenya", value);
     setDataFilter({
       ...dataFilter,
       [name]: value,
     });
-    console.log("current data filter", dataFilter);
+    // console.log("current data filter", dataFilter);
   }
 
   // buat sebelum save, sesudah save di lempar ke dataFilter
   function handleChangeTextTempFilter(name, value) {
-    console.log("temp name", name, "temp value", value);
+    // console.log("temp name", name, "temp value", value);
     name == "date"
       ? setTempDataFilter({
           ...tempDataFilter,
@@ -330,8 +321,8 @@ function Home({ navigation }) {
   //     // status: status => details.length < 30 && details.width >= 70,
   //   };
   //   const filtered = filterArray(listToFilter, filters);
-  //   console.log("filtered bois", filtered);
-  //   console.log("dataFilter.search.toLowerCase()", dataFilter.search.toLowerCase());
+  //   // console.log("filtered bois", filtered);
+  //   // console.log("dataFilter.search.toLowerCase()", dataFilter.search.toLowerCase());
   // }
 
   return (
@@ -552,8 +543,8 @@ function Home({ navigation }) {
                       const filterDate = milisToDate(
                         parseInt(dataFilter.date)
                       ).split(" ")[0];
-                      console.log("item date", itemDate);
-                      console.log("filter date", filterDate);
+                      // console.log("item date", itemDate);
+                      // console.log("filter date", filterDate);
                       return itemDate == filterDate;
                     }
 

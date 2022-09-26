@@ -1,19 +1,19 @@
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext, useEffect, useState } from "react";
 import FlashMessage from "react-native-flash-message";
 import Spinner from "react-native-loading-spinner-overlay";
 import { API, setAuthorization } from "./config/api";
 import { UserContext } from "./context/userContext";
-import Home from "./screens/Home";
-import AddList from "./screens/AddList";
 import AddCategory from "./screens/AddCategory";
+import AddList from "./screens/AddList";
+import DetailList from "./screens/DetailList";
+import Home from "./screens/Home";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Welcome from "./screens/Welcome";
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import DetailList from "./screens/DetailList";
 
 function Container() {
   const NativeStack = createNativeStackNavigator();
@@ -31,15 +31,15 @@ function Container() {
         validateStatus: () => true,
       })
         .then((response) => {
-          console.log("response yang mau dijadiin payload ini bro", response);
-          console.log("ini data response harusnya", response);
+          // console.log("response yang mau dijadiin payload ini bro", response);
+          // console.log("ini data response harusnya", response);
           if (response.status >= 400) {
             return dispatch({
               type: "AUTH_ERROR",
             });
           }
 
-          console.log("ini data response pas berhasil", response);
+          // console.log("ini data response pas berhasil", response);
           const payload = response.data;
           dispatch({
             type: "AUTH_SUCCESS",
@@ -50,11 +50,11 @@ function Container() {
           dispatch({
             type: "AUTH_ERROR",
           });
-          console.log("ini state error", state);
+          // console.log("ini state error", state);
         });
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setIsLoading(false);
     }
   }

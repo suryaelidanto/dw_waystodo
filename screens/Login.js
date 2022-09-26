@@ -26,7 +26,7 @@ function Login({ navigation }) {
     try {
       const response = await API.post("/auth/login", dataLogin);
       AsyncStorage.setItem("token", response.data.token);
-      console.log(response.data);
+      // console.log(response.data);
       const payload = response.data;
       showMessage({
         message: "Login berhasil!",

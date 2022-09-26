@@ -1,8 +1,8 @@
 import { Box, Button, Input, Text } from "native-base";
-import { useQuery, useMutation } from "react-query";
-import { API } from "../config/api";
-import { showMessage } from "react-native-flash-message";
 import { useState } from "react";
+import { showMessage } from "react-native-flash-message";
+import { useMutation, useQuery } from "react-query";
+import { API } from "../config/api";
 
 function AddCategory({ navigation }) {
   const [dataCategory, setDataCategory] = useState({
@@ -13,7 +13,7 @@ function AddCategory({ navigation }) {
     "categoryCaches",
     async () => {
       let categoryResponse = await API.get("/Category");
-      console.log("category list", categoryResponse.data);
+      // console.log("category list", categoryResponse.data);
       return categoryResponse.data;
     }
   );
@@ -58,7 +58,7 @@ function AddCategory({ navigation }) {
         });
       }
       const response = await API.post("/Category", dataCategory);
-      console.log(response.data);
+      // console.log(response.data);
       showMessage({
         message: "Category berhasil ditambahkan!",
         type: "success",

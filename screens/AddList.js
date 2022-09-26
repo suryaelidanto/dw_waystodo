@@ -1,8 +1,8 @@
-import { Box, Button, Input, Text, TextArea, Select } from "native-base";
-import { useQuery, useMutation } from "react-query";
-import { API } from "../config/api";
-import { showMessage } from "react-native-flash-message";
+import { Box, Button, Input, Select, Text, TextArea } from "native-base";
 import { useState } from "react";
+import { showMessage } from "react-native-flash-message";
+import { useMutation, useQuery } from "react-query";
+import { API } from "../config/api";
 
 function AddCategory({ navigation }) {
   const [dataList, setDataList] = useState({
@@ -17,7 +17,7 @@ function AddCategory({ navigation }) {
     "categoryCaches",
     async () => {
       let categoryResponse = await API.get("/Category");
-      console.log("category list", categoryResponse.data);
+      // console.log("category list", categoryResponse.data);
       return categoryResponse.data;
     }
   );
@@ -32,8 +32,8 @@ function AddCategory({ navigation }) {
           ...dataList,
           [name]: value,
         });
-    console.log("ini punya", name, "valuenya", value);
-    console.log("dataList", dataList);
+    // console.log("ini punya", name, "valuenya", value);
+    // console.log("dataList", dataList);
   }
 
   const handleSubmit = useMutation(async (e) => {
@@ -71,7 +71,7 @@ function AddCategory({ navigation }) {
         is_done: 0,
       };
       const response = await API.post("/List", listData);
-      console.log("berhasil menambahkan", response.data);
+      // console.log("berhasil menambahkan", response.data);
       showMessage({
         message: "List berhasil ditambahkan!",
         type: "success",

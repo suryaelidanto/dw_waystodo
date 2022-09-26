@@ -12,7 +12,7 @@ function DetailList({ route, navigation }) {
     "listDetailCaches",
     async () => {
       let listResponse = await API.get(`/List/${listId}`);
-      console.log("response list detail", listResponse.data);
+      // console.log("response list detail", listResponse.data);
       return listResponse.data;
     }
   );
@@ -64,7 +64,7 @@ function DetailList({ route, navigation }) {
       );
       listRefetch();
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       showMessage({
         message: "Gagal mengubah status todo!",
         type: "danger",
