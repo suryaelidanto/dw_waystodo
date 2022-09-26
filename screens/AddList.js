@@ -4,7 +4,7 @@ import { API } from "../config/api";
 import { showMessage } from "react-native-flash-message";
 import { useState } from "react";
 
-function AddCategory({ navigation }) {
+function AddList({ navigation }) {
   const [dataList, setDataList] = useState({
     name: "",
     date: "",
@@ -186,4 +186,4 @@ function AddCategory({ navigation }) {
   );
 }
 
-export default AddCategory;
+export default AddList;

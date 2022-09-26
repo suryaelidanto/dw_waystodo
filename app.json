@@ -23,10 +23,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/waystodo-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.suryaelidanto.WaysTODO"
     },
     "web": {
       "favicon": "./assets/waystodo-icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b20cfe85-01f8-4849-ac83-ebb162413a10"
+      }
     }
   }
 }
